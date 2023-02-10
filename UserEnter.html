@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+         .content{
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .product{
+            width: 300px;
+            border: 1px solid;
+            padding: 35px;
+            justify-content: flex-start;
+            text-align: center;
+        }
+        img{
+            width: 200px;
+        }
+    </style>
+
+<input class="input" type="text">
+<p>Введите название напитка</p>
+<button class="load">Найти</button>
+
+
+
+      <div class="content">
+    </div> 
+    <template class="template">
+        <div class="product">
+            <h1 class="name">Margarita</h1>
+            <p class="row">Alcoholic</p>
+            <p class="script">Rub the rim of the glass with the lime slice to make the salt stick to it. Take care to moisten only the outer rim and sprinkle the salt on it. The salt should present to the lips of the imbiber and never mix into the cocktail. Shake the other ingredients with ice, then carefully pour into the glass.</p>
+            <img class="img_drink" src="https://www.thecocktaildb.com/images/media/drink/5noda61589575158.jpg">
+        </div>
+    </template>
+    <script>
+        function loadDrinks(drinkName) {
+                fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=' + drinkName)
+                    .then(response => response.json())
+                    //  .then(data => console.log(data))//строку переделываем в showProduct
+                    .then(data => showProduct(data))//и создаем фунцию
+                    .catch(error => console.error(error));
+            }
+
+            const input = document.querySelector('.input');
+            input.addEventListener('input', (e) => {
+                loadDrinks(e.target.value);
+                
+            });
+
+
+            function showProduct(data) {
+                if (!data || !data.drinks) {
+                    return;
+                    
+                }
+                // console.log(data);
+                const content = document.querySelector('.content');
+
+                content.innerHTML = '';
+                const template = document.querySelector('.template');
+
+                data.drinks.forEach((elem) => {
+
+                    const product = template.content.querySelector('.product').cloneNode(true);//копируем содержимое всей карточки
+                    const name = product.querySelector('.name');
+                    name.textContent = elem.strDrink;
+                    content.appendChild(product);
+
+                    const row = product.querySelector('.row');
+                    row.textContent = elem.strAlcoholic;
+
+                    const script = product.querySelector('.script');
+                    script.textContent = elem.strInstructions;
+
+                    const img_drink = product.querySelector('.img_drink');
+                    img_drink.src = elem.strDrinkThumb;
+
+                })
+            }
+        </script>
+    </body>
+    
+    </html>
